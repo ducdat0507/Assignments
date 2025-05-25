@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit="submitForm(event)">
+        <div>
+            <label for="number-a">Number a: </label>
+            <input type="number" id="number-a" name="a">
+        </div>
+        <div>
+            <label for="number-b">Number b: </label>
+            <input type="number" id="number-b" name="b">
+        </div>
+        <div>
+            <label for="number-b">Operator: </label>
+            <select name="op">
+                <option value="add">a + b</option>
+                <option value="subtract">a - b</option>
+                <option value="multiply">a * b</option>
+                <option value="divide">a / b</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Calculate</button>
+        </div>
+        <div id="answer">
+        </div>
+    </form>
+    <script>
+        /** @param {Event} event */
+        function submitForm(event) {
+            event.preventDefault();
+            const data = new FormData(event.target);
+            const answerBox = document.getElementById("answer");
+            answerBox.innerText = "Calculating...";
+            fetch("/calc", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    a: parseFloat(data.get("a")),
+                    b: parseFloat(data.get("b")),
+                    op: data.get("op"),
+                })
+            }).then(x => x.json()).then(x => {
+                if (x.error) answerBox.innerText = "Error: " + x.error;
+                answerBox.innerText = x.result;
+            }).catch(err => {
+                answerBox.innerText = "Error: " + err;
+            })
+        }
+    </script>
+</body>
+</html>
