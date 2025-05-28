@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit="submitForm(event)">
+        <div>
+            <label for="student-name">Name: </label>
+            <input type="text" id="student-name" name="name">
+        </div>
+        <div>
+            <label for="student-birthday">Birthday: </label>
+            <input type="date" id="student-birthday" name="birthday">
+        </div>
+        <div>
+            <label for="student-grade">Grade: </label>
+            <input type="number" id="student-grade" name="grade">
+        </div>
+        <div>
+            <button type="submit">Create Student</button>
+        </div>
+        <div id="answer">
+        </div>
+    </form>
+    <script>
+        /** @param {Event} event */
+        function submitForm(event) {
+            event.preventDefault();
+            const data = new FormData(event.target);
+            const answerBox = document.getElementById("answer");
+            answerBox.innerText = "Creating...";
+            fetch("/api/students", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    name: data.get("name"),
+                    birthday: data.get("birthday"),
+                    grade: data.get("grade"),
+                })
+            }).then(x => x.json()).then(x => {
+                if (x.error) answerBox.innerText = "Error: " + x.error;
+                answerBox.innerText = x.id;
+            }).catch(err => {
+                answerBox.innerText = "Error: " + err;
+            })
+        }
+    </script>
+</body>
+</html>
