@@ -58,16 +58,6 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
         );
     }
 
-    async update(enrollment: Enrollment): Promise<void> {
-        // Assuming you want to update to a new course for a student
-        // You may need a composite key or unique id for enrollments
-        // This is a placeholder and may need adjustment
-        await this.#db.query(
-            "UPDATE enrollments SET course_id = ? WHERE student_id = ? AND course_id = ?",
-            [enrollment.courseId, enrollment.studentId, enrollment.courseId]
-        );
-    }
-
     async delete(enrollment: Enrollment): Promise<void> {
         await this.#db.query(
             "DELETE FROM enrollments WHERE student_id = ? AND course_id = ?",
