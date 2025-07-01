@@ -58,6 +58,14 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
         );
     }
 
+    async update(enrollment: Enrollment): Promise<void> {
+        // TODO add items
+        // await this.#db.query(
+        //     "UPDATE enrollments WHERE student_id = ? AND course_id = ?",
+        //     [enrollment.studentId, enrollment.courseId]
+        // );
+    }
+
     async delete(enrollment: Enrollment): Promise<void> {
         await this.#db.query(
             "DELETE FROM enrollments WHERE student_id = ? AND course_id = ?",
