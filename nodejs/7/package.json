@@ -1,19 +1,16 @@
 {
-  "name": "6",
+  "name": "7",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "mysql2": "^3.14.1"
-  },
-  "devDependencies": {
-    "@types/node": "^24.0.3"
+    "mongodb": "^6.17.0"
   }
 }

@@ -36,7 +36,8 @@ export class MySQLCourseRepository implements CourseRepository {
 
     async save(course: Course): Promise<void> {
         await this.#db.query(
-            "INSERT INTO courses (id, name) VALUES (?, ?)",
+            `INSERT INTO courses (id, name) VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE name = VALUES(name)`,
             [course.id, course.name]
         );
     }

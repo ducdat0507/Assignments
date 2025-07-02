@@ -22,6 +22,7 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
                 new Enrollment({
                     studentId: row.student_id,
                     courseId: row.course_id,
+                    enrollDate: row.enroll_date
                 })
         );
     }
@@ -36,6 +37,7 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
                 new Enrollment({
                     studentId: row.student_id,
                     courseId: row.course_id,
+                    enrollDate: row.enroll_date
                 })
         );
     }
@@ -47,23 +49,24 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
                 new Enrollment({
                     studentId: row.student_id,
                     courseId: row.course_id,
+                    enrollDate: row.enroll_date
                 })
         );
     }
 
     async save(enrollment: Enrollment): Promise<void> {
         await this.#db.query(
-            "INSERT INTO enrollments (student_id, course_id) VALUES (?, ?)",
-            [enrollment.studentId, enrollment.courseId]
+            `INSERT INTO enrollments (student_id, course_id, enroll_date) VALUES (?, ?, ?)
+             ON DUPLICATE KEY UPDATE enroll_date = VALUES(enroll_date)`,
+            [enrollment.studentId, enrollment.courseId, enrollment.enrollDate]
         );
     }
 
     async update(enrollment: Enrollment): Promise<void> {
-        // TODO add items
-        // await this.#db.query(
-        //     "UPDATE enrollments WHERE student_id = ? AND course_id = ?",
-        //     [enrollment.studentId, enrollment.courseId]
-        // );
+        await this.#db.query(
+            "UPDATE enrollments SET enroll_date = ? WHERE student_id = ? AND course_id = ?",
+            [enrollment.enrollDate, enrollment.studentId, enrollment.courseId]
+        );
     }
 
     async delete(enrollment: Enrollment): Promise<void> {

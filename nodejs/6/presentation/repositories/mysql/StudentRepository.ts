@@ -39,7 +39,8 @@ export class MySQLStudentRepository implements StudentRepository {
 
     async save(student: Student): Promise<void> {
         await this.#db.query(
-            "INSERT INTO students (id, full_name, birthdate) VALUES (?, ?, ?)",
+            `INSERT INTO students (id, full_name, birthdate) VALUES (?, ?, ?)
+             ON DUPLICATE KEY UPDATE full_name = VALUES(full_name), birthdate = VALUES(birthdate)`,
             [student.id, student.fullName, student.birthdate]
         );
     }
