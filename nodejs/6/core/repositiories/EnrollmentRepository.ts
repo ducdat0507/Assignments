@@ -3,11 +3,11 @@ import { Enrollment } from "../entities/Enrollment/Enrollment";
 import { Student } from "../entities/Student/Student";
 
 export interface EnrollmentRepository {
-    findByStudent(student: Student): Promise<Enrollment[]>;
-    findByCourse(course: Course): Promise<Enrollment[]>;
+    findByStudentId(id: string): Promise<Enrollment[]>;
+    findByCourseId(id: string): Promise<Enrollment[]>;
     findAll(): Promise<Enrollment[]>;
 
-    save(enrollment: Enrollment): Promise<void>;
+    create(enrollment: Enrollment): Promise<void>;
     update(enrollment: Enrollment): Promise<void>;
 
     delete(enrollment: Enrollment): Promise<void>;

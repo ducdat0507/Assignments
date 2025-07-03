@@ -1,6 +1,6 @@
-import { StudentRepository } from "../../../core/repositiories/StudentRepository";
-import { Student } from "../../../core/entities/Student/Student";
-import { StudentConstructorArgs } from "../../../core/entities/Student/StudentConstructorArgs";
+import { StudentRepository } from "../../../../core/repositiories/StudentRepository";
+import { Student } from "../../../../core/entities/Student/Student";
+import { StudentConstructorArgs } from "../../../../core/entities/Student/StudentConstructorArgs";
 import { Pool } from "mysql2/promise";
 
 export class MySQLStudentRepository implements StudentRepository {
@@ -37,10 +37,9 @@ export class MySQLStudentRepository implements StudentRepository {
         );
     }
 
-    async save(student: Student): Promise<void> {
+    async create(student: Student): Promise<void> {
         await this.#db.query(
-            `INSERT INTO students (id, full_name, birthdate) VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE full_name = VALUES(full_name), birthdate = VALUES(birthdate)`,
+            `INSERT INTO students (id, full_name, birthdate) VALUES (?, ?, ?)`,
             [student.id, student.fullName, student.birthdate]
         );
     }

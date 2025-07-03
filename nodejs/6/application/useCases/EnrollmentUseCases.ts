@@ -1,29 +1,29 @@
-import { EnrollmentRepository } from "../repositiories/EnrollmentRepository";
-import { Enrollment } from "../entities/Enrollment/Enrollment";
-import { Student } from "../entities/Student/Student";
-import { Course } from "../entities/Course/Course";
+import { EnrollmentRepository } from "../../core/repositiories/EnrollmentRepository";
+import { Enrollment } from "../../core/entities/Enrollment/Enrollment";
+import { Student } from "../../core/entities/Student/Student";
+import { Course } from "../../core/entities/Course/Course";
 
 export class CreateEnrollmentUseCase {
     constructor(private enrollmentRepository: EnrollmentRepository) {}
 
     async execute(enrollment: Enrollment): Promise<void> {
-        await this.enrollmentRepository.save(enrollment);
+        await this.enrollmentRepository.create(enrollment);
     }
 }
 
-export class GetEnrollmentsByStudentUseCase {
+export class GetEnrollmentsByStudentIdUseCase {
     constructor(private enrollmentRepository: EnrollmentRepository) {}
 
-    async execute(student: Student): Promise<Enrollment[]> {
-        return this.enrollmentRepository.findByStudent(student);
+    async execute(id: string): Promise<Enrollment[]> {
+        return this.enrollmentRepository.findByStudentId(id);
     }
 }
 
-export class GetEnrollmentsByCourseUseCase {
+export class GetEnrollmentsByCourseIdUseCase {
     constructor(private enrollmentRepository: EnrollmentRepository) {}
 
-    async execute(course: Course): Promise<Enrollment[]> {
-        return this.enrollmentRepository.findByCourse(course);
+    async execute(id: string): Promise<Enrollment[]> {
+        return this.enrollmentRepository.findByCourseId(id);
     }
 }
 

@@ -1,7 +1,7 @@
-import { EnrollmentRepository } from "../../../core/repositiories/EnrollmentRepository";
-import { Enrollment } from "../../../core/entities/Enrollment/Enrollment";
-import { Student } from "../../../core/entities/Student/Student";
-import { Course } from "../../../core/entities/Course/Course";
+import { EnrollmentRepository } from "../../../../core/repositiories/EnrollmentRepository";
+import { Enrollment } from "../../../../core/entities/Enrollment/Enrollment";
+import { Student } from "../../../../core/entities/Student/Student";
+import { Course } from "../../../../core/entities/Course/Course";
 import { Pool } from "mysql2/promise";
 
 export class MySQLEnrollmentRepository implements EnrollmentRepository {
@@ -12,10 +12,10 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
         this.#db = db;
     }
 
-    async findByStudent(student: Student): Promise<Enrollment[]> {
+    async findByStudentId(id: string): Promise<Enrollment[]> {
         const [rows] = await this.#db.query(
             "SELECT * FROM enrollments WHERE student_id = ?",
-            [student.id]
+            [id]
         );
         return (rows as any[]).map(
             (row) =>
@@ -27,10 +27,10 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
         );
     }
 
-    async findByCourse(course: Course): Promise<Enrollment[]> {
+    async findByCourseId(id: string): Promise<Enrollment[]> {
         const [rows] = await this.#db.query(
             "SELECT * FROM enrollments WHERE course_id = ?",
-            [course.id]
+            [id]
         );
         return (rows as any[]).map(
             (row) =>
@@ -54,10 +54,9 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
         );
     }
 
-    async save(enrollment: Enrollment): Promise<void> {
+    async create(enrollment: Enrollment): Promise<void> {
         await this.#db.query(
-            `INSERT INTO enrollments (student_id, course_id, enroll_date) VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE enroll_date = VALUES(enroll_date)`,
+            `INSERT INTO enrollments (student_id, course_id, enroll_date) VALUES (?, ?, ?)`,
             [enrollment.studentId, enrollment.courseId, enrollment.enrollDate]
         );
     }

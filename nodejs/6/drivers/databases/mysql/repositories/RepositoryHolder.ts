@@ -1,9 +1,9 @@
 import { createPool, Pool, PoolOptions } from "mysql2/promise";
-import { CourseRepository } from "../../../core/repositiories/CourseRepository";
-import { EnrollmentRepository } from "../../../core/repositiories/EnrollmentRepository";
-import { RepositoryHolder } from "../../../core/repositiories/RepositoryHolder";
-import { StudentRepository } from "../../../core/repositiories/StudentRepository";
-import { MySQLStudentRepository } from "./StudentRepository";
+import { CourseRepository } from "../../../../core/repositiories/CourseRepository";
+import { EnrollmentRepository } from "../../../../core/repositiories/EnrollmentRepository";
+import { RepositoryHolder } from "../../../../core/repositiories/RepositoryHolder";
+import { StudentRepository } from "../../../../core/repositiories/StudentRepository";
+import { MySQLStudentRepository } from "../StudentRepository";
 import { MySQLCourseRepository } from "./CourseRepository";
 import { MySQLEnrollmentRepository } from "./EnrollmentRepository";
 
