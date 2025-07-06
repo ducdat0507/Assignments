@@ -1,11 +1,11 @@
-import { StudentRepository } from "../repositiories/StudentRepository";
-import { Student } from "../entities/Student/Student";
+import { StudentRepository } from "../../core/repositiories/StudentRepository";
+import { Student } from "../../core/entities/Student/Student";
 
 export class CreateStudentUseCase {
     constructor(private studentRepository: StudentRepository) {}
 
     async execute(student: Student): Promise<void> {
-        await this.studentRepository.save(student);
+        await this.studentRepository.create(student);
     }
 }
 

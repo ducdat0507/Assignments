@@ -1,18 +1,18 @@
-import { CourseRepository } from "../repositiories/CourseRepository";
-import { Course } from "../entities/Course/Course";
+import { CourseRepository } from "../../core/repositiories/CourseRepository";
+import { Course } from "../../core/entities/Course/Course";
 
 export class CreateCourseUseCase {
     constructor(private courseRepository: CourseRepository) {}
 
     async execute(course: Course): Promise<void> {
-        await this.courseRepository.save(course);
+        await this.courseRepository.create(course);
     }
 }
 
 export class GetCourseByIdUseCase {
     constructor(private courseRepository: CourseRepository) {}
 
-    async execute(id: string): Promise<Course | null> {
+    async execute(id: string): Promise<Course> {
         return this.courseRepository.findById(id);
     }
 }

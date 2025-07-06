@@ -1,5 +1,5 @@
-import { CourseRepository } from "../../../core/repositiories/CourseRepository";
-import { Course } from "../../../core/entities/Course/Course";
+import { CourseRepository } from "../../../../core/repositiories/CourseRepository";
+import { Course } from "../../../../core/entities/Course/Course";
 import { Pool } from "mysql2/promise";
 
 export class MySQLCourseRepository implements CourseRepository {
@@ -34,10 +34,9 @@ export class MySQLCourseRepository implements CourseRepository {
         );
     }
 
-    async save(course: Course): Promise<void> {
+    async create(course: Course): Promise<void> {
         await this.#db.query(
-            `INSERT INTO courses (id, name) VALUES (?, ?)
-             ON DUPLICATE KEY UPDATE name = VALUES(name)`,
+            `INSERT INTO courses (id, name) VALUES (?, ?)`,
             [course.id, course.name]
         );
     }
