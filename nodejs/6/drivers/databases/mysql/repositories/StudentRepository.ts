@@ -2,6 +2,8 @@ import { StudentRepository } from "../../../../core/repositiories/StudentReposit
 import { Student } from "../../../../core/entities/Student/Student";
 import { StudentConstructorArgs } from "../../../../core/entities/Student/StudentConstructorArgs";
 import { Pool } from "mysql2/promise";
+import { EntityNotFoundError } from "../../../../errors/EntityNotFoundError";
+import { StudentAdapter } from "../adapters/StudentAdapter";
 
 export class MySQLStudentRepository implements StudentRepository {
 
@@ -11,30 +13,18 @@ export class MySQLStudentRepository implements StudentRepository {
         this.#db = db;
     }
 
-    async findById(id: string): Promise<Student | null> {
+    async findById(id: string): Promise<Student> {
         const [rows] = await this.#db.query(
             "SELECT * FROM students WHERE id = ?",
             [id]
         );
         const result = (rows as any[])[0];
-        if (!result) return null;
-        return new Student({
-            id: result.id,
-            fullName: result.full_name,
-            birthdate: new Date(result.birthdate),
-        });
+        return StudentAdapter.fromRow(result);
     }
 
     async findAll(): Promise<Student[]> {
         const [rows] = await this.#db.query("SELECT * FROM students");
-        return (rows as any[]).map(
-            (row) =>
-                new Student({
-                    id: row.id,
-                    fullName: row.full_name,
-                    birthdate: new Date(row.birthdate),
-                })
-        );
+        return (rows as any[]).map(StudentAdapter.fromRow);
     }
 
     async create(student: Student): Promise<void> {

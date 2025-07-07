@@ -3,6 +3,8 @@ import { Enrollment } from "../../../../core/entities/Enrollment/Enrollment";
 import { Student } from "../../../../core/entities/Student/Student";
 import { Course } from "../../../../core/entities/Course/Course";
 import { Pool } from "mysql2/promise";
+import { EntityNotFoundError } from "../../../../errors/EntityNotFoundError";
+import { EnrollmentAdapter } from "../adapters/EnrollmentAdapter";
 
 export class MySQLEnrollmentRepository implements EnrollmentRepository {
 
@@ -12,19 +14,22 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
         this.#db = db;
     }
 
+    async findByIds(studentId: string, courseId: string): Promise<Enrollment> {
+        const [rows] = await this.#db.query(
+            "SELECT * FROM enrollments WHERE student_id = ? AND course_id = ?",
+            [studentId, courseId]
+        );
+        const result = (rows as any[])[0];
+        if (!result) throw new EntityNotFoundError("Course", studentId, courseId);
+        return EnrollmentAdapter.fromRow(result);
+    }
+
     async findByStudentId(id: string): Promise<Enrollment[]> {
         const [rows] = await this.#db.query(
             "SELECT * FROM enrollments WHERE student_id = ?",
             [id]
         );
-        return (rows as any[]).map(
-            (row) =>
-                new Enrollment({
-                    studentId: row.student_id,
-                    courseId: row.course_id,
-                    enrollDate: row.enroll_date
-                })
-        );
+        return (rows as any[]).map(EnrollmentAdapter.fromRow);
     }
 
     async findByCourseId(id: string): Promise<Enrollment[]> {
@@ -32,39 +37,37 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
             "SELECT * FROM enrollments WHERE course_id = ?",
             [id]
         );
-        return (rows as any[]).map(
-            (row) =>
-                new Enrollment({
-                    studentId: row.student_id,
-                    courseId: row.course_id,
-                    enrollDate: row.enroll_date
-                })
-        );
+        return (rows as any[]).map(EnrollmentAdapter.fromRow);
     }
 
     async findAll(): Promise<Enrollment[]> {
         const [rows] = await this.#db.query("SELECT * FROM enrollments");
-        return (rows as any[]).map(
-            (row) =>
-                new Enrollment({
-                    studentId: row.student_id,
-                    courseId: row.course_id,
-                    enrollDate: row.enroll_date
-                })
-        );
+        return (rows as any[]).map(EnrollmentAdapter.fromRow);
     }
 
     async create(enrollment: Enrollment): Promise<void> {
         await this.#db.query(
-            `INSERT INTO enrollments (student_id, course_id, enroll_date) VALUES (?, ?, ?)`,
-            [enrollment.studentId, enrollment.courseId, enrollment.enrollDate]
+            `INSERT INTO enrollments (student_id, course_id, enrollment_type, enroll_date, enroll_until) VALUES (?, ?, ?, ?, ?)`,
+            [
+                enrollment.studentId,
+                enrollment.courseId,
+                enrollment.enrollmentType,
+                enrollment.enrollDate,
+                enrollment.enrollUntil ?? null
+            ]
         );
     }
 
     async update(enrollment: Enrollment): Promise<void> {
         await this.#db.query(
-            "UPDATE enrollments SET enroll_date = ? WHERE student_id = ? AND course_id = ?",
-            [enrollment.enrollDate, enrollment.studentId, enrollment.courseId]
+            "UPDATE enrollments SET enrollment_type = ?, enroll_date = ?, enroll_until = ? WHERE student_id = ? AND course_id = ?",
+            [
+                enrollment.enrollmentType,
+                enrollment.enrollDate,
+                enrollment.enrollUntil ?? null,
+                enrollment.studentId,
+                enrollment.courseId
+            ]
         );
     }
 

@@ -1,5 +1,6 @@
 import { StudentRepository } from "../../core/repositiories/StudentRepository";
 import { Student } from "../../core/entities/Student/Student";
+import { EntityNotFoundError } from "../../errors/EntityNotFoundError";
 
 export class CreateStudentUseCase {
     constructor(private studentRepository: StudentRepository) {}
@@ -12,7 +13,7 @@ export class CreateStudentUseCase {
 export class GetStudentByIdUseCase {
     constructor(private studentRepository: StudentRepository) {}
 
-    async execute(id: string): Promise<Student | null> {
+    async execute(id: string): Promise<Student> {
         return this.studentRepository.findById(id);
     }
 }

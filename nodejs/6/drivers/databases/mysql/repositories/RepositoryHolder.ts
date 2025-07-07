@@ -3,7 +3,7 @@ import { CourseRepository } from "../../../../core/repositiories/CourseRepositor
 import { EnrollmentRepository } from "../../../../core/repositiories/EnrollmentRepository";
 import { RepositoryHolder } from "../../../../core/repositiories/RepositoryHolder";
 import { StudentRepository } from "../../../../core/repositiories/StudentRepository";
-import { MySQLStudentRepository } from "../StudentRepository";
+import { MySQLStudentRepository } from "./StudentRepository";
 import { MySQLCourseRepository } from "./CourseRepository";
 import { MySQLEnrollmentRepository } from "./EnrollmentRepository";
 

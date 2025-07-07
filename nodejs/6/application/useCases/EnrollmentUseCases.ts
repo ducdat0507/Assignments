@@ -11,6 +11,14 @@ export class CreateEnrollmentUseCase {
     }
 }
 
+export class GetEnrollmentsByIdsUseCase {
+    constructor(private enrollmentRepository: EnrollmentRepository) {}
+
+    async execute(studentId: string, courseId: string): Promise<Enrollment[]> {
+        return this.enrollmentRepository.findByIds(studentId, courseId);
+    }
+}
+
 export class GetEnrollmentsByStudentIdUseCase {
     constructor(private enrollmentRepository: EnrollmentRepository) {}
 
