@@ -47,7 +47,7 @@ app.put('/api/product/:id', express.json(), (req, res) => {
     });
 })
 
-app.delete('/api/product/:id', express.json(), (req, res) => {
+app.delete('/api/product/:id', express.json(), (req, res) => {c
     const { id } = req.params;
     db.collection("products").deleteOne({_id: id}).then(result => {
         if (result.deletedCount) res.status(200).json({ok: 1});
