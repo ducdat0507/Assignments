@@ -1,9 +1,11 @@
 {
   "name": "6",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "build/index.ts",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx tsc index.ts --outDir ./build",
+    "test": "npm run build && ./build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -12,10 +14,11 @@
   "dependencies": {
     "dotenv": "^17.1.0",
     "express": "^5.1.0",
-    "mysql2": "^3.14.1"
+    "mysql2": "^3.14.1",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
-    "@types/node": "^24.0.3"
+    "@types/node": "^24.0.10"
   }
 }

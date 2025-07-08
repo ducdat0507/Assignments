@@ -2,3 +2,4 @@ node_modules/
 
 .env
 nodejs/8/res/video.mp4
+nodejs/6/build/
