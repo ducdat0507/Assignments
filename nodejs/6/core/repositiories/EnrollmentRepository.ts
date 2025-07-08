@@ -11,5 +11,5 @@ export interface EnrollmentRepository {
     create(enrollment: Enrollment): Promise<void>;
     update(enrollment: Enrollment): Promise<void>;
 
-    delete(enrollment: Enrollment): Promise<void>;
+    delete(studentId: string, courseId: string): Promise<void>;
 }

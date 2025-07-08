@@ -40,8 +40,7 @@ export class CourseController {
         await this.#updateCourseUseCase.execute(course);
     }
 
-    async delete(data: CourseDTO) {
-        const course = CourseDTO.toEntity(data);
-        await this.#deleteCourseUseCase.execute(course);
+    async delete(id: string) {
+        await this.#deleteCourseUseCase.execute(id);
     }
 }

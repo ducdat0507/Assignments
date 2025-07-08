@@ -37,8 +37,7 @@ export class StudentController {
         await this.#updateStudentUseCase.execute(student);
     }
 
-    async delete(data: StudentDTO) {
-        const student = StudentDTO.toEntity(data);
-        await this.#deleteStudentUseCase.execute(student);
+    async delete(id: string) {
+        await this.#deleteStudentUseCase.execute(id);
     }
 }

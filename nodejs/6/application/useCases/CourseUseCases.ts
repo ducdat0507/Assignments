@@ -36,7 +36,7 @@ export class UpdateCourseUseCase {
 export class DeleteCourseUseCase {
     constructor(private courseRepository: CourseRepository) {}
 
-    async execute(course: Course): Promise<void> {
-        await this.courseRepository.delete(course);
+    async execute(id: string): Promise<void> {
+        await this.courseRepository.delete(id);
     }
 }

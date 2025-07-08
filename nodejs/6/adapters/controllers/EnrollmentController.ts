@@ -1,9 +1,10 @@
-import { CreateEnrollmentUseCase, GetAllEnrollmentsUseCase, UpdateEnrollmentUseCase, DeleteEnrollmentUseCase, GetEnrollmentsByStudentIdUseCase, GetEnrollmentsByCourseIdUseCase } from "../../application/useCases/EnrollmentUseCases";
+import { CreateEnrollmentUseCase, GetAllEnrollmentsUseCase, UpdateEnrollmentUseCase, DeleteEnrollmentUseCase, GetEnrollmentsByStudentIdUseCase, GetEnrollmentsByCourseIdUseCase, GetEnrollmentsByIdsUseCase } from "../../application/useCases/EnrollmentUseCases";
 import { EnrollmentDTO } from "../dtos/EnrollmentDTO";
 import { RepositoryHolder } from "../../core/repositiories/RepositoryHolder";
 
 export class EnrollmentController {
     #createEnrollmentUseCase: CreateEnrollmentUseCase;
+    #getEnrollmentsByIdsUseCase: GetEnrollmentsByIdsUseCase;
     #getEnrollmentsByStudentIdUseCase: GetEnrollmentsByStudentIdUseCase;
     #getEnrollmentsByCourseIdUseCase: GetEnrollmentsByCourseIdUseCase;
     #getAllEnrollmentsUseCase: GetAllEnrollmentsUseCase;
@@ -12,6 +13,7 @@ export class EnrollmentController {
 
     constructor(repositories: RepositoryHolder) {
         this.#createEnrollmentUseCase = new CreateEnrollmentUseCase(repositories.enrollmentRepository);
+        this.#getEnrollmentsByIdsUseCase = new GetEnrollmentsByIdsUseCase(repositories.enrollmentRepository);
         this.#getEnrollmentsByStudentIdUseCase = new GetEnrollmentsByStudentIdUseCase(repositories.enrollmentRepository);
         this.#getEnrollmentsByCourseIdUseCase = new GetEnrollmentsByCourseIdUseCase(repositories.enrollmentRepository);
         this.#getAllEnrollmentsUseCase = new GetAllEnrollmentsUseCase(repositories.enrollmentRepository);
@@ -24,6 +26,10 @@ export class EnrollmentController {
         await this.#createEnrollmentUseCase.execute(enrollment);
     }
 
+    async getByIds(courseId: string, studentId: string) {
+        let enrollment = await this.#getEnrollmentsByIdsUseCase.execute(studentId, courseId);
+        return EnrollmentDTO.fromEntity(enrollment);
+    }
     async getByStudentId(id: string) {
         let enrollments = await this.#getEnrollmentsByStudentIdUseCase.execute(id);
         return enrollments.map(EnrollmentDTO.fromEntity);
@@ -43,8 +49,7 @@ export class EnrollmentController {
         await this.#updateEnrollmentUseCase.execute(enrollment);
     }
 
-    async delete(data: EnrollmentDTO) {
-        const enrollment = EnrollmentDTO.toEntity(data);
-        await this.#deleteEnrollmentUseCase.execute(enrollment);
+    async delete(studentId: string, courseId: string) {
+        await this.#deleteEnrollmentUseCase.execute(studentId, courseId);
     }
 }

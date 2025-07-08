@@ -4,7 +4,7 @@ export class Student {
 
     // ---------- Properties ---------- //
     
-    #id: string;
+    #id?: string;
     #fullName: string;
     #birthdate: Date;
 
@@ -18,7 +18,7 @@ export class Student {
 
     // ---------- Getters and Setters ---------- //
 
-    get id(): string {
+    get id(): string | undefined {
         return this.#id;
     }
     get fullName(): string {

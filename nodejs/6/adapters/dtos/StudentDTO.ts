@@ -1,11 +1,11 @@
 import { Student } from "../../core/entities/Student/Student";
 
 export class StudentDTO {
-    id: string;
+    id?: string;
     fullName: string;
     birthdate: Date;
 
-    constructor(id: string, fullName: string, birthdate: Date) {
+    constructor(id: string | undefined, fullName: string, birthdate: Date) {
         this.id = id;
         this.fullName = fullName;
         this.birthdate = birthdate;
@@ -23,3 +23,5 @@ export class StudentDTO {
         });
     }
 }
+
+export type MaybeStudentDTO = Partial<StudentDTO>

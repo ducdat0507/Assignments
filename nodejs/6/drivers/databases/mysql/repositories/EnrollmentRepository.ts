@@ -3,8 +3,9 @@ import { Enrollment } from "../../../../core/entities/Enrollment/Enrollment";
 import { Student } from "../../../../core/entities/Student/Student";
 import { Course } from "../../../../core/entities/Course/Course";
 import { Pool } from "mysql2/promise";
-import { EntityNotFoundError } from "../../../../errors/EntityNotFoundError";
+import { EntityNotFoundError } from "../../../../core/errors/EntityNotFoundError";
 import { EnrollmentAdapter } from "../adapters/EnrollmentAdapter";
+import { AlreadyEnrolledError } from "../../../../core/errors/ALreadyEnrolledError";
 
 export class MySQLEnrollmentRepository implements EnrollmentRepository {
 
@@ -20,7 +21,7 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
             [studentId, courseId]
         );
         const result = (rows as any[])[0];
-        if (!result) throw new EntityNotFoundError("Course", studentId, courseId);
+        if (!result) throw new EntityNotFoundError("Enrollment", studentId, courseId);
         return EnrollmentAdapter.fromRow(result);
     }
 
@@ -46,20 +47,26 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
     }
 
     async create(enrollment: Enrollment): Promise<void> {
-        await this.#db.query(
-            `INSERT INTO enrollments (student_id, course_id, enrollment_type, enroll_date, enroll_until) VALUES (?, ?, ?, ?, ?)`,
-            [
-                enrollment.studentId,
-                enrollment.courseId,
-                enrollment.enrollmentType,
-                enrollment.enrollDate,
-                enrollment.enrollUntil ?? null
-            ]
-        );
+        try {
+            await this.#db.query(
+                `INSERT INTO enrollments (student_id, course_id, enrollment_type, enroll_date, enroll_until) VALUES (?, ?, ?, ?, ?)`,
+                [
+                    enrollment.studentId,
+                    enrollment.courseId,
+                    enrollment.enrollmentType,
+                    enrollment.enrollDate,
+                    enrollment.enrollUntil ?? null
+                ]
+            );
+        } catch (e) {
+            if (e.code == "ER_DUP_ENTRY") {
+                throw new AlreadyEnrolledError(enrollment.courseId, enrollment.studentId);
+            }
+        }
     }
 
     async update(enrollment: Enrollment): Promise<void> {
-        await this.#db.query(
+        let [result] = await this.#db.query(
             "UPDATE enrollments SET enrollment_type = ?, enroll_date = ?, enroll_until = ? WHERE student_id = ? AND course_id = ?",
             [
                 enrollment.enrollmentType,
@@ -69,12 +76,14 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
                 enrollment.courseId
             ]
         );
+        if (!result.affectedRows) throw new EntityNotFoundError("Enrollment", enrollment.studentId, enrollment.courseId);
     }
 
-    async delete(enrollment: Enrollment): Promise<void> {
-        await this.#db.query(
+    async delete(studentId: string, courseId: string): Promise<void> {
+        let [result] = await this.#db.query(
             "DELETE FROM enrollments WHERE student_id = ? AND course_id = ?",
-            [enrollment.studentId, enrollment.courseId]
+            [studentId, courseId]
         );
+        if (!result.affectedRows) throw new EntityNotFoundError("Enrollment", studentId, courseId);
     }
 }

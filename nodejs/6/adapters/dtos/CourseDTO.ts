@@ -1,10 +1,10 @@
 import { Course } from "../../core/entities/Course/Course";
 
 export class CourseDTO {
-    id: string;
+    id?: string;
     name: string;
 
-    constructor(id: string, name: string) {
+    constructor(id: string | undefined, name: string) {
         this.id = id;
         this.name = name;
     }
@@ -20,3 +20,5 @@ export class CourseDTO {
         });
     }
 }
+
+export type MaybeCourseDTO = Partial<CourseDTO>

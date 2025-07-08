@@ -4,7 +4,7 @@ export class Course {
 
     // ---------- Properties ---------- //
     
-    #id: string;
+    #id?: string;
     #name: string;
 
     // ---------- Constructor ---------- //
@@ -16,7 +16,7 @@ export class Course {
 
     // ---------- Getters and Setters ---------- //
 
-    get id(): string {
+    get id(): string | undefined {
         return this.#id;
     }
     get name(): string {

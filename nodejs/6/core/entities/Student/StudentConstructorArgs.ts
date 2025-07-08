@@ -1,6 +1,6 @@
 
 export type StudentConstructorArgs = {
-    id: string;
+    id?: string;
     fullName: string;
     birthdate: Date;
 };

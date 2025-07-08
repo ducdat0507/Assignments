@@ -1,5 +1,5 @@
 
 export type CourseConstructorArgs = {
-    id: string;
+    id?: string;
     name: string;
 };

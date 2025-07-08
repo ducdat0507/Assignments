@@ -30,3 +30,5 @@ export class EnrollmentDTO {
         });
     }
 }
+
+export type MaybeEnrollmentDTO = Partial<EnrollmentDTO>
