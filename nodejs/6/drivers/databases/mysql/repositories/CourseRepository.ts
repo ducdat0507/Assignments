@@ -3,6 +3,7 @@ import { Course } from "../../../../core/entities/Course/Course";
 import { Pool } from "mysql2/promise";
 import { EntityNotFoundError } from "../../../../core/errors/EntityNotFoundError";
 import { CourseAdapter } from "../adapters/CourseAdapter";
+import { QueryResult } from "../QueryResult";
 
 export class MySQLCourseRepository implements CourseRepository {
 
@@ -31,20 +32,20 @@ export class MySQLCourseRepository implements CourseRepository {
         let [result] = await this.#db.query(
             `INSERT INTO courses (name) VALUES (?)`,
             [course.name]
-        );
-        return result.insertId;
+        ) as unknown as [QueryResult];
+        return result.insertId + "";
     }
 
     async update(course: Course): Promise<void> {
         let [result] = await this.#db.execute(
             "UPDATE courses SET name = ? WHERE id = ?",
             [course.name, course.id]
-        );
+        ) as unknown as [QueryResult];
         if (!result.affectedRows) throw new EntityNotFoundError("Course", course.id!);
     }
 
     async delete(id: string): Promise<void> {
-        let [result] = await this.#db.query("DELETE FROM courses WHERE id = ?", [id]);
+        let [result] = await this.#db.query("DELETE FROM courses WHERE id = ?", [id]) as unknown as [QueryResult];
         if (!result.affectedRows) throw new EntityNotFoundError("Course", id);
     }
 }

@@ -5,6 +5,7 @@ import { Pool } from "mysql2/promise";
 import { EntityNotFoundError } from "../../../../core/errors/EntityNotFoundError";
 import { StudentAdapter } from "../adapters/StudentAdapter";
 import { AlreadyExistsError } from "../../../../core/errors/AlreadyExistsError";
+import { QueryResult } from "../QueryResult";
 
 export class MySQLStudentRepository implements StudentRepository {
 
@@ -32,7 +33,7 @@ export class MySQLStudentRepository implements StudentRepository {
         let [result] = await this.#db.query(
             `INSERT INTO students (full_name, birthdate) VALUES (?, ?)`,
             [student.fullName, student.birthdate]
-        );
+        ) as unknown as [QueryResult];
         return result.insertId + "";
     }
 
@@ -40,12 +41,12 @@ export class MySQLStudentRepository implements StudentRepository {
         let [result] = await this.#db.query(
             "UPDATE students SET full_name = ?, birthdate = ? WHERE id = ?",
             [student.fullName, student.birthdate, student.id]
-        );
+        ) as unknown as [QueryResult];
         if (!result.affectedRows) throw new EntityNotFoundError("Student", student.id!);
     }
 
     async delete(id: string): Promise<void> {
-        let [result] = await this.#db.query("DELETE FROM students WHERE id = ?", [id]);
+        let [result] = await this.#db.query("DELETE FROM students WHERE id = ?", [id]) as unknown as [QueryResult];
         if (!result.affectedRows) throw new EntityNotFoundError("Student", id);
     }
 }

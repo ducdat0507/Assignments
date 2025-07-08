@@ -2,16 +2,17 @@
   "name": "6",
   "version": "1.0.0",
   "main": "build/index.ts",
-  "type": "module",
   "scripts": {
-    "build": "npx tsc index.ts --outDir ./build",
-    "test": "npm run build && ./build/index.js"
+    "build": "npx tsc",
+    "test": "npm run build && node ./build/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/webidl-conversions": "^7.0.3",
+    "@types/whatwg-url": "^13.0.0",
     "dotenv": "^17.1.0",
     "express": "^5.1.0",
     "mysql2": "^3.14.1",

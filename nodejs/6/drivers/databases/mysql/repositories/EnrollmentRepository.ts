@@ -5,7 +5,8 @@ import { Course } from "../../../../core/entities/Course/Course";
 import { Pool } from "mysql2/promise";
 import { EntityNotFoundError } from "../../../../core/errors/EntityNotFoundError";
 import { EnrollmentAdapter } from "../adapters/EnrollmentAdapter";
-import { AlreadyEnrolledError } from "../../../../core/errors/ALreadyEnrolledError";
+import { AlreadyEnrolledError } from "../../../../core/errors/AlreadyEnrolledError";
+import { QueryResult } from "../QueryResult";
 
 export class MySQLEnrollmentRepository implements EnrollmentRepository {
 
@@ -75,7 +76,7 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
                 enrollment.studentId,
                 enrollment.courseId
             ]
-        );
+        ) as unknown as [QueryResult];
         if (!result.affectedRows) throw new EntityNotFoundError("Enrollment", enrollment.studentId, enrollment.courseId);
     }
 
@@ -83,7 +84,7 @@ export class MySQLEnrollmentRepository implements EnrollmentRepository {
         let [result] = await this.#db.query(
             "DELETE FROM enrollments WHERE student_id = ? AND course_id = ?",
             [studentId, courseId]
-        );
+        ) as unknown as [QueryResult];
         if (!result.affectedRows) throw new EntityNotFoundError("Enrollment", studentId, courseId);
     }
 }
