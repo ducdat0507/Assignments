@@ -1,6 +1,6 @@
 import curses as c
 
-from utils import draw_controls, draw_table
+from controllers.student import StudentController
 
 
 students = []
@@ -8,29 +8,21 @@ students = []
 stdscr = c.initscr()
 c.start_color()
 c.noecho()
+stdscr.keypad(True)
 c.cbreak()
+c.curs_set(0)
 stdscr.clear()
 
 i = 1
 c.use_default_colors()
 try:
-    for a in range(0, c.COLORS):
-        c.init_pair(i, i - 1, -1)
-        i += 1
+    for a in range(0, 16):
+        for b in range(0, 16):
+            c.init_pair(i, a, b)
+            i += 1
 except:
     pass
 
-def repaint():
-    draw_controls(stdscr, [
-            ("[`]", "Menu")
-        ])
-    draw_table(stdscr, students)
-    for a in range(1, i):
-        stdscr.addstr(str(a), c.color_pair(a))
-repaint()
-while True:
-    key = stdscr.getch()
-    match key:
-        case _:
-            repaint()
-            
+controller = StudentController(stdscr)
+controller.start()
+

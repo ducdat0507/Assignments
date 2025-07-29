@@ -29,6 +29,10 @@ class Person():
         self._last_name = str(value)
 
     @property
+    def full_name(self):
+        return " ".join([x for x in [self.first_name, self.middle_name, self.last_name] if x])
+
+    @property
     def birthday(self):
         return self._birthday
     @birthday.setter
