@@ -1,18 +1,21 @@
 from entities.person import Person
 
 class Student(Person):
-    def __init__(self, *, id, scores, **kwargs):
-        self.id = id
+    def __init__(self, *, student_id, scores, **kwargs):
+        self.student_id = student_id
         self.scores = scores
-        self.__init__(**kwargs)
+        super().__init__(**kwargs)
 
     @property
-    def id(self):
-        return self._id
+    def student_id(self):
+        return self._student_id
+    @student_id.setter
+    def student_id(self, value):
+        self._student_id = value
     
     @property
     def scores(self):
         return self._scores
     @scores.setter
-    def set_scores(self, value):
+    def scores(self, value):
         self._scores = value
