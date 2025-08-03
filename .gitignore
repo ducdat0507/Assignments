@@ -5,3 +5,4 @@ nodejs/8/res/video.mp4
 nodejs/6/build/
 
 __pycache__/
+.venv/
