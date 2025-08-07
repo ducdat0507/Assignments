@@ -1,12 +1,13 @@
 import curses as c
 from datetime import date, datetime
 from typing import List
+import matplotlib.pyplot as plot
 
 from entities.student import Student
 from forms.date import DateFormItem
 from forms.input import InputFormItem
 from forms.submit import SubmitFormItem
-from utils import do_choice_window, do_form, draw_controls, draw_table, draw_window
+from utils import do_choice_window, do_form, draw_controls, draw_table
 
 
 class StudentController:
@@ -44,6 +45,7 @@ class StudentController:
                         "Add new student",
                         "Filter students",
                         "Save to file",
+                        "Plot GPA",
                         "Quit",
                     ]
             )
@@ -52,6 +54,9 @@ class StudentController:
                 self.do_student_form()
                 return
             case 3:
+                self.do_gpa_plot()
+                return
+            case 4:
                 exit(0)
 
     def do_student_form(self, item:Student | None=None):
@@ -98,4 +103,10 @@ class StudentController:
                     return
                 except ValueError as e:
                     self.stdscr.addstr(str(e))
+
+    def do_gpa_plot(self):
+        plot.bar([s.full_name for s in self.students], [s.average_score for s in self.students])
+        plot.xlabel("Student")
+        plot.ylabel("GPA")
+        plot.show()
             

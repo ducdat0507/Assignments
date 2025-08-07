@@ -1,6 +1,7 @@
 
 from typing import Dict, List, Tuple
 import curses as c
+import curses.panel as p
 
 from entities.student import Student
 from forms.base import FormItem
@@ -35,40 +36,44 @@ def draw_controls(stdscr: c.window, controls: List[Tuple[str, str]]):
     _, x = stdscr.getyx()
     stdscr.addstr(" " * (width - x - 1), get_color(1, 0))
     stdscr.insch(height - 1, width - 1, " ", get_color(1, 0))
-    
-def draw_window(stdscr: c.window, top, left, h, w):
-    for y in range(top, top + h):
-        stdscr.addstr(y, left, " " * w, get_color(7, 0))
 
 def do_choice_window(stdscr: c.window, top, left, *, choices: List[str]):
     h = len(choices) + 2
     w = max(len(choice) for choice in choices) + 8
-    draw_window(stdscr, top, left, h, w)
+    win = stdscr.subwin(h, w, top, left)
+    win.box()
+    win.refresh()
     selected = 0
     while True:
         for idx, choice in enumerate(choices):
             attr = get_color(0, 7) if idx == selected else get_color(7, 0)
             cursor = "> " if idx == selected else "  "
-            stdscr.addstr(top + 1 + idx, left + 2, f" {cursor}{choice} ".ljust(w - 4), attr)
+            win.addstr(1 + idx, 2, f" {cursor}{choice} ".ljust(w - 4), attr)
+        win.refresh()
         key = stdscr.getch()
         if key == c.KEY_UP:
             selected = (selected - 1) % len(choices)
         elif key == c.KEY_DOWN:
             selected = (selected + 1) % len(choices)
         elif key in (c.KEY_ENTER, 10, 13):
+            del win
             return selected
         elif key == 27: # ESC
+            del win
             return None
 
 def do_form(stdscr: c.window, top, left, w=40, *, items: Dict[str, FormItem]):
     h = len(items) * 2 + 1
-    draw_window(stdscr, top, left, h, w)
+    win = stdscr.subwin(h, w, top, left)
+    win.box()
+    win.refresh()
     item_list = list(items.values())
     selected = 0
     def draw_item(idx):
-        item_list[idx].draw(stdscr, top + 1 + idx * 2, left + 2, 1, w - 4, selected == idx)
+        item_list[idx].draw(win, 1 + idx * 2, 2, 1, w - 4, selected == idx)
     for idx in range(len(items)):
         draw_item(idx)
+    win.refresh()
     while True:
         key = stdscr.getch()
         if key == c.KEY_UP:
@@ -76,18 +81,23 @@ def do_form(stdscr: c.window, top, left, w=40, *, items: Dict[str, FormItem]):
             selected = (selected - 1) % len(items)
             draw_item(last_sel)
             draw_item(selected)
+            win.refresh()
         elif key == c.KEY_DOWN:
             last_sel = selected
             selected = (selected + 1) % len(items)
             draw_item(last_sel)
             draw_item(selected)
+            win.refresh()
         elif key in (c.KEY_ENTER, 10, 13):
             result = item_list[selected].on_key(stdscr, key)
             if (result):
+                del win
                 return result
             else:
                 draw_item(selected)
+                win.refresh()
         elif key == 27: # ESC
+            del win
             return False
         else:
             result = item_list[selected].on_key(stdscr, key)

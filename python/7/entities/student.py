@@ -19,3 +19,7 @@ class Student(Person):
     @scores.setter
     def scores(self, value):
         self._scores = value
+        
+    @property
+    def gpa(self):
+        return sum(self._scores) / len(self._scores) if self._scores else 0
