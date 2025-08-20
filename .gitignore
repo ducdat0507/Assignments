@@ -7,4 +7,7 @@ nodejs/6/build/
 __pycache__/
 .venv/
 
+bin/
+obj/
+
 *.sqlite3

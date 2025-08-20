@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div>
+    <h1>All Products</h1>
+    <table class="table">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+        </tr>
+        @foreach (Product product in Model) {
+            <tr>
+                <th scope="row">@product.Id</th>
+                <td>
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
+                </td>
+                <td>@product.Price</td>
+            </tr>
+        }
+    </table>
+</div>
