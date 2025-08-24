@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Student>
+@{
+    ViewData["Title"] = "Students";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Score</th>
+    </tr>
+    @foreach (Student student in Model) {
+        <tr>
+            <td>@student.Id</td>
+            <td><a asp-controller="Aptech" asp-action="Student" asp-route-id="@student.Id">@student.Name</a></td>
+            <td>@student.Score</td>
+        </tr>
+    }
+</table>

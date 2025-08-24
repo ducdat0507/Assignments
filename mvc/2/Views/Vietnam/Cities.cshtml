@@ -1,0 +1,19 @@
+﻿@model List<string>
+@{
+    ViewData["Title"] = "Cities";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <tr>
+        <th>No.</th>
+        <th>Name</th>
+    </tr>
+    @for (int a = 0; a < Model.Count; a++) {
+        <tr>
+            <td>@(a + 1)</td>
+            <td>@Model[a]</td>
+        </tr>
+    }
+</table>
