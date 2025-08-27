@@ -1,0 +1,14 @@
+﻿@using System.Collections
+@model MovieModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="grid">
+    <h1>@ViewData["Title"]</h1>
+    <p>@Model.Synopsis</p>
+    <p><b>Cast:</b> @Model.Cast</p>
+    <p><b>Ticket price:</b> @Model.TicketPrice HDD</p>
+    <a class="btn btn-primary" href="@Model.TrailerLink">Trailer</a>
+    <a class="btn btn-primary" href="@Model.WatchLink">Watch Now</a>
+</di>
