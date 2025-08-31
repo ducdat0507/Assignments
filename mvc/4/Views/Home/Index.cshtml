@@ -1,0 +1,27 @@
+﻿
+@model IEnumerable<ProductCategory>
+@{
+    ViewData["Title"] = "All Products";
+}
+
+<div class="text-center">
+    <h1 class="display-4">All Products</h1>
+</div>
+
+@foreach (ProductCategory category in Model) {
+    <section>
+        <h2>@category.Name</h2>
+        <div class="row g-2">
+            @foreach (Product product in category.Products) {
+                <div class="col-2">
+                    <a class="card" asp-controller="Product" asp-route-id="@product.Id">
+                        <img class="card-img-top" src="@product.ThumbnailUrl" alt="Product thumbnail"></img>
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </section>
+}
