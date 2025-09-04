@@ -1,0 +1,19 @@
+﻿
+@model Product
+@{
+    ViewData["Title"] = "All Products";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@Model.Name</h1>
+</div>
+
+<button id="add-card-btn" class="btn btn-primary">
+    Add to cart
+</button>
+
+<script>
+    $(".add-card-btn").on("click", (e) => {
+        localStorage.setItem("cart", @Model.Id);
+    })
+</script>

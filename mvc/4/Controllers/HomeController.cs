@@ -22,6 +22,21 @@ public class HomeController : Controller
         return View(_database.ProductCategories.Include(e => e.Products));
     }
 
+    public IActionResult Category(ulong id)
+    {
+        var thing = _database.ProductCategories.Where(e => e.Id == id).FirstOrDefault();
+        if (thing == null) return NotFound();
+        return View();
+    }
+
+    public IActionResult Detail(ulong id)
+    {
+        var thing = _database.Products.Where(e => e.Id == id).FirstOrDefault();
+        if (thing == null) return NotFound();
+        return View();
+    }
+
+
     public IActionResult Privacy()
     {
         return View();

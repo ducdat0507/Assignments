@@ -1,0 +1,22 @@
+﻿
+@model ProductCategory
+@{
+    ViewData["Title"] = "All Products";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@Model.Name</h1>
+</div>
+
+<div class="row g-2">
+    @foreach (Product product in Model.Products) {
+        <div class="col-2">
+            <a class="card" asp-controller="Product" asp-route-id="@product.Id">
+                <img class="card-img-top" src="@product.ThumbnailUrl" alt="Product thumbnail"></img>
+                <div class="card-body">
+                    <h5 class="card-title">@product.Name</h5>
+                </div>
+            </a>
+        </div>
+    }
+</div>
