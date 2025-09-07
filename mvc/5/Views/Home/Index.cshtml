@@ -1,0 +1,28 @@
+﻿
+@model IEnumerable<Student>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Students</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>First Name</th>
+                <th>Second Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model) {
+                <tr>
+                    <td>@student.Id</td>
+                    <td>@student.FirstName</td>
+                    <td>@student.SecondName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
