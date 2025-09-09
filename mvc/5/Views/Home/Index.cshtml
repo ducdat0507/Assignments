@@ -25,4 +25,9 @@
             }
         </tbody>
     </table>
+
+    <div>
+        <a class="btn" asp-route-page="@((int)ViewData["Page"]! - 1)">Previous Page</a>
+        <a class="btn" asp-route-page="@((int)ViewData["Page"]! + 1)">Next Page</a>
+    </div>
 </div>

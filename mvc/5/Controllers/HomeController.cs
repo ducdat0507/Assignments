@@ -19,6 +19,7 @@ public class HomeController : Controller
 
     public IActionResult Index(int page = 1)
     {
+        ViewData["CurrentPage"] = page;
         return View(
             _database.Students
                 .Include(s => s.EnrolledBatches)

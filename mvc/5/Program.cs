@@ -9,7 +9,11 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultSqlite")));
+            options.UseMySql(
+                builder.Configuration.GetConnectionString("DefaultMysql"),
+                new MySqlServerVersion(new Version(8, 0))
+            )
+        );
 
         builder.Services.AddControllersWithViews();
 

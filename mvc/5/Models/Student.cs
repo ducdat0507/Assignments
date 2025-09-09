@@ -10,6 +10,8 @@ public class Student
 
     public string? SecondName { get; set; }
 
+    public Gender? Gender { get; set; }
+
     public DateOnly? BirthDate { get; set; }
 
     public string? PhoneNumber { get; set; }
@@ -33,4 +35,10 @@ public class StudentEnrollment
     public ulong StudentId { get; set; }
 
     public ulong StudentBatchId { get; set; }
+}
+
+public enum Gender
+{
+    Male,
+    Female
 }
