@@ -1,0 +1,74 @@
+﻿@{
+	int itemsPerSide = 3;
+
+	int currentPage = (int)@ViewData["CurrentPage"]!;
+	int totalPages = (int)@ViewData["TotalPages"]!;
+}
+
+<nav class="d-flex justify-content-end gap-2"> 
+	<ul class="pagination">
+		@if (currentPage != 1)
+		{
+			<partial name="Components/Pagination/_PageItem" model="1" />
+		}
+		@if (currentPage > itemsPerSide + 1)
+		{
+			<li class="page-item disabled"><span class="page-link">...</span></li>
+		}
+		@for (int page = Math.Max(2, currentPage - itemsPerSide); page < currentPage; page++)
+		{
+			<partial name="Components/Pagination/_PageItem" model="@(page)" />
+		}
+
+		<li class="page-item active dropdown">
+			<button class="page-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+				@currentPage
+			</button>
+			<div class="dropdown-menu p-3 pt-2">
+				<form>
+					<div class="row" style="width: 12em">
+						<label class="form-label">Jump to page:</label>
+						<div class="input-group">
+							<input class="form-control" type="number" name="page" value="@currentPage" />
+							<button class="btn btn-primary" type="submit">
+								<i class="bi bi-arrow-right"></i>
+								<span class="visually-hidden">Go</span>
+							</button>
+						</div>
+						@foreach (var param in Context.Request.Query) if (param.Key != "page")
+						{
+							<input type="hidden" name="@param.Key" value="@param.Value" />
+						}
+					</div>
+				</form>
+			</div>
+		</li>
+
+		@for (int page = currentPage + 1; page < Math.Min(totalPages, currentPage + itemsPerSide + 1); page++)
+		{
+			<partial name="Components/Pagination/_PageItem" model="@(page)" />
+		}
+		@if (currentPage < totalPages - itemsPerSide - 1)
+		{
+			<li class="page-item disabled"><span class="page-link">...</span></li>
+		}
+		@if (currentPage != totalPages)
+		{
+			<partial name="Components/Pagination/_PageItem" model="@totalPages" />
+		}
+	</ul>
+	<div class="dropdown d-flex align-items-baseline">
+		<button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+			@ViewData["PageSize"]
+		</button>
+		<span>
+			items per page
+		</span>
+		<div class="dropdown-menu">
+			<partial name="Components/Pagination/_PageSizeItem" model="10" />
+			<partial name="Components/Pagination/_PageSizeItem" model="20" />
+			<partial name="Components/Pagination/_PageSizeItem" model="50" />
+			<partial name="Components/Pagination/_PageSizeItem" model="100" />
+		</div>
+	</div>
+</nav>

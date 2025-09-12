@@ -11,7 +11,7 @@ internal class Program
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseMySql(
                 builder.Configuration.GetConnectionString("DefaultMysql"),
-                new MySqlServerVersion(new Version(8, 0))
+                new MySqlServerVersion(new Version(8, 0, 31))
             )
         );
 

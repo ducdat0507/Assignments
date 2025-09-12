@@ -1,0 +1,5 @@
+﻿@model int
+
+<li class="page-item">
+	<a class="page-link" asp-all-route-data="@Context.Request.Query.Select(x => (x.Key, x.Value.ToString())).ToDictionary()" asp-route-page="@Model">@Model</a>
+</li>

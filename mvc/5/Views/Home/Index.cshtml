@@ -2,32 +2,48 @@
 @model IEnumerable<Student>
 @{
     ViewData["Title"] = "Home Page";
+    System.Diagnostics.Debug.Assert(Model != null);
 }
 
 <div class="text-center">
     <h1 class="display-4">Students</h1>
-    
-    <table>
+
+    @await Component.InvokeAsync("Pagination", new
+        {
+            currentPage = ViewData["CurrentPage"],
+            totalPages = ViewData["TotalPages"],
+            pageSize = ViewData["PageSize"]
+        })
+
+    <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>ID</th>
+                <th>Last Name</th>
                 <th>First Name</th>
-                <th>Second Name</th>
+                <th>Birthdate</th>
+                <th>Email</th>
+                <th>Phone Number</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var student in Model) {
+            @foreach (Student student in Model) {
                 <tr>
-                    <td>@student.Id</td>
-                    <td>@student.FirstName</td>
-                    <td>@student.SecondName</td>
+                    <td class="text-end fw-bold">@student.Id</td>
+                    <td class="text-start">@student.SecondName</td>
+                    <td class="text-start">@student.FirstName</td>
+                    <td class="text-start">@student.BirthDate</td>
+                    <td class="text-start">@student.EmailAddress</td>
+                    <td class="text-start">@student.PhoneNumber</td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <div>
-        <a class="btn" asp-route-page="@((int)ViewData["Page"]! - 1)">Previous Page</a>
-        <a class="btn" asp-route-page="@((int)ViewData["Page"]! + 1)">Next Page</a>
-    </div>
+    @await Component.InvokeAsync("Pagination", new
+        {
+            currentPage = ViewData["CurrentPage"],
+            totalPages = ViewData["TotalPages"],
+            pageSize = ViewData["PageSize"]
+        })
 </div>
