@@ -31,6 +31,8 @@ public class StudentEnrollment
 
 public class StudentMark
 {
+    public int Id { get; set; }
+    
     public required StudentEnrollment Owner { get; set; }
 
     public required Subject Subject { get; set; }

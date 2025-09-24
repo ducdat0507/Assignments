@@ -30,9 +30,6 @@ namespace _7.Data
                 .HasKey("StudentId", "BatchId");
 
             modelBuilder.Entity<StudentMark>()
-                .HasKey(m => new { StudentId = m.Owner.Student.Id, BatchId = m.Owner.Batch.Id });
-
-            modelBuilder.Entity<StudentMark>()
                 .HasOne(m => m.Owner)
                 .WithMany(e => e.Marks)
                 .HasForeignKey("StudentId", "BatchId");
