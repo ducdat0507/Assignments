@@ -1,5 +1,7 @@
 
 using System.Text;
+using _1.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,22 +14,22 @@ namespace _1
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<ApplicationDbContext>(x =>
-                x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSqlServer"))
+                x.UseInMemoryDatabase("TestDb1")
             );
 
+            
+
+            builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+            {
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders()
+                .AddRoles<IdentityRole>();
+
             builder.Services.AddAuthentication("Bearer")
-                .AddJwtBearer(options =>
+                .AddBearerToken(options =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        ValidAudience = builder.Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-                    };
+                    options.BearerTokenExpiration = TimeSpan.FromSeconds(60);
                 });
             builder.Services.AddAuthorization();
 
