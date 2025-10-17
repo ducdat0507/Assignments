@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace _1.Controllers
 {
@@ -26,6 +27,11 @@ namespace _1.Controllers
         [Authorize(Roles="User")]
         public async Task<IActionResult> Get()
         {
+            var username = HttpContext.User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub);
+            if (username == null) return Forbid("Bearer");
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == username.Value);
+            if (user == null) return Forbid("Bearer");
+
             return Ok("this is super secret string");
         }
     }
