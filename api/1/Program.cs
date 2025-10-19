@@ -80,7 +80,7 @@ namespace _1
 
             using (var scope = app.Services.CreateScope())
             {
-                ApplicationDbSeeder.Seed(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>()); 
+                ApplicationDbSeeder.SeedRolesAsync(scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>()); 
             }
             
             // Configure the HTTP request pipeline.

@@ -5,22 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 public static class ApplicationDbSeeder
 {
-    public static void Seed(ApplicationDbContext dbContext)
+    public static void SeedRolesAsync(RoleManager<IdentityRole> roleManager)
     {
-        if (dbContext.Roles.SingleOrDefault() == null)
-        {
-            dbContext.Roles.Add(new IdentityRole()
-            {
-                Name = "User",
-                NormalizedName = "USER",
-            });
-            dbContext.Roles.Add(new IdentityRole()
-            {
-                Name = "Admin",
-                NormalizedName = "ADMIN",
-            });
+        string[] roles = { "Admin", "Manager", "User" };
 
-            dbContext.SaveChanges();
+        foreach (var role in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+            }
         }
     }
 
