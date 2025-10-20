@@ -9,6 +9,8 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace _1.Controllers
 {
@@ -40,10 +42,11 @@ namespace _1.Controllers
             bool isValidCredentials = await _userManager.CheckPasswordAsync(user, data.Password);
             if (!isValidCredentials) return Forbid("Invalid password");
 
-            string accessToken = await CreateTokens(HttpContext.Response, user, data.RememberMe);
+            await CreateTokensAsync(HttpContext.Response, user, data.RememberMe);
+            await LogInAsync(user);
             await _dbContext.SaveChangesAsync();
 
-            return Ok(new {token = accessToken});
+            return Ok();
         }
 
         [HttpPost("[action]")]
@@ -61,10 +64,11 @@ namespace _1.Controllers
             }
             await _userManager.AddToRoleAsync(user, "User");
             
-            string accessToken = await CreateTokens(HttpContext.Response, user, true);
+            await CreateTokensAsync(HttpContext.Response, user, true);
+            await LogInAsync(user);
             await _dbContext.SaveChangesAsync();
 
-            return Ok(new {token = accessToken});
+            return Ok();
         }
 
         [HttpPost("[action]")]
@@ -90,37 +94,35 @@ namespace _1.Controllers
             }
 
 
-            string accessToken = await UseTokens(HttpContext.Response, tokenData);
+            await UseTokensAsync(HttpContext.Response, tokenData);
+            await LogInAsync(tokenData.User);
             await _dbContext.SaveChangesAsync();
 
-            return Ok(new {token = accessToken});
+            return Ok();
         }
 
-        protected string GenerateJwtToken(AppUser user)
+        protected async Task LogInAsync(AppUser user)
         {
             var claims = new Claim[]
             {
-                new(JwtRegisteredClaimNames.Sub, user.Id),
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(ClaimTypes.Name, user.Id),
+            };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1),
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JwtSettings:Issuer"],
-                audience: _configuration["JwtSettings:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddSeconds(60),
-                signingCredentials: cred
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
         }
+        
 
-        protected async Task<string> CreateTokens(HttpResponse response, AppUser user, bool remember)
+        protected async Task CreateTokensAsync(HttpResponse response, AppUser user, bool remember)
         {
-            string accessToken = GenerateJwtToken(user);
             string refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(512));
 
             _dbContext.RefreshTokens.Add(new RefreshToken()
@@ -135,15 +137,12 @@ namespace _1.Controllers
                 Secure = true,
                 SameSite = SameSiteMode.Lax,
             });
-
-            return accessToken;
         }
 
-        protected async Task<string> UseTokens(HttpResponse response, RefreshToken refreshToken)
+        protected async Task UseTokensAsync(HttpResponse response, RefreshToken refreshToken)
         {
-            string accessToken = GenerateJwtToken(refreshToken.User);
             string newRefreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(512));
-
+            
             refreshToken.Token = newRefreshToken;
 
             response.Cookies.Append("auth-refresh-token", newRefreshToken, new CookieOptions()
@@ -152,8 +151,6 @@ namespace _1.Controllers
                 Secure = true,
                 SameSite = SameSiteMode.Lax,
             });
-
-            return accessToken;
         }
     }
 }

@@ -5,17 +5,32 @@ using Microsoft.EntityFrameworkCore;
 
 public static class ApplicationDbSeeder
 {
-    public static void SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+    public static void SeedAsync(ApplicationDbContext dbContext)
     {
-        string[] roles = { "Admin", "Manager", "User" };
+        dbContext.Database.EnsureCreated();
+    }
+
+    public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+    {
+        string[] roles = ["Admin", "Manager", "User"];
+
+        List<Task> tasks = new();
 
         foreach (var role in roles)
         {
-            if (!await roleManager.RoleExistsAsync(role))
+            tasks.Add(Task.Run(async () =>
             {
-                await roleManager.CreateAsync(new IdentityRole(role));
-            }
+                Console.WriteLine("Creating role " + role);
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                    Console.WriteLine("Created role " + role);
+                }
+            }));
         }
+
+        CancellationToken cancellationToken = new();
+        foreach (Task task in tasks) await task.WaitAsync(cancellationToken);
     }
 
 }
