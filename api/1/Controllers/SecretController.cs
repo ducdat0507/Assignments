@@ -28,9 +28,9 @@ namespace _1.Controllers
         public async Task<IActionResult> Get()
         {
             var username = HttpContext.User.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub);
-            if (username == null) return Forbid("Bearer");
+            if (username == null) return Forbid("Cookie");
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == username.Value);
-            if (user == null) return Forbid("Bearer");
+            if (user == null) return Forbid("Cookie");
 
             return Ok("this is super secret string");
         }
