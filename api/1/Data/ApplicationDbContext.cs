@@ -19,7 +19,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
             .OnDelete(DeleteBehavior.Cascade);
     }
 
-
+    public DbSet<Article> Articles { get; set; }
+    
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
 }
