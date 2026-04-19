@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Event List</title>
+    <title><fmt:message key="viewEvents.title"/></title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { border-collapse: collapse; width: 100%; }
@@ -11,15 +11,17 @@
     </style>
 </head>
 <body>
-    <h1>Event List</h1>
+    <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+    <fmt:setBundle basename="messages"/>
+    <h1><fmt:message key="viewEvents.title"/></h1>
     <table>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Venue</th>
-            <th>Seats Available</th>
-            <th>Actions</th>
+            <th><fmt:message key="viewEvents.id"/></th>
+            <th><fmt:message key="viewEvents.name"/></th>
+            <th><fmt:message key="viewEvents.date"/></th>
+            <th><fmt:message key="viewEvents.venue"/></th>
+            <th><fmt:message key="viewEvents.seats"/></th>
+            <th><fmt:message key="viewEvents.actions"/></th>
         </tr>
         <%@ page import="java.util.List, com.example.project_10.Event" %>
         <% List<Event> events = (List<Event>) request.getAttribute("events"); %>
@@ -35,14 +37,15 @@
                         <form action="viewEvents" method="post" style="display:inline;">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="id" value="<%= event.getId() %>">
-                            <button type="submit">Delete</button>
+                            <input type="hidden" name="lang" value="${param.lang}">
+                            <button type="submit"><fmt:message key="viewEvents.delete"/></button>
                         </form>
-                        <a href="viewAttendees?eventId=<%= event.getId() %>">View Attendees</a>
+                        <a href="viewAttendees?eventId=<%= event.getId() %>&lang=${param.lang}"><fmt:message key="viewEvents.viewAttendees"/></a>
                     </td>
                 </tr>
             <% } %>
         <% } %>
     </table>
-    <br><a href="index.jsp">Back to Home</a>
+    <br><a href="index.jsp?lang=${param.lang}"><fmt:message key="backHome"/></a>
 </body>
 </html>

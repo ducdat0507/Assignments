@@ -44,6 +44,6 @@ public class ViewEventsServlet extends HttpServlet {
             em.close();
         }
 
-        response.sendRedirect("viewEvents");
+        response.sendRedirect("viewEvents?lang=" + request.getParameter("lang"));
     }
 }

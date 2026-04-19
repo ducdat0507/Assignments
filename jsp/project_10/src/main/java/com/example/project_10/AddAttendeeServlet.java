@@ -60,7 +60,7 @@ public class AddAttendeeServlet extends HttpServlet {
         tx.commit();
         em.close();
 
-        response.sendRedirect("viewAttendees?eventId=" + eventId);
+        response.sendRedirect("viewAttendees?eventId=" + eventId + "&lang=" + request.getParameter("lang"));
     }
 
     @Override

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Attendees List</title>
+    <title><fmt:message key="viewAttendees.title"/>: <%= ((com.example.project_10.Event) request.getAttribute("event")).getName() %></title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { border-collapse: collapse; width: 100%; }
@@ -10,12 +10,14 @@
     </style>
 </head>
 <body>
-    <h1>Attendees for Event: <%= ((com.example.project_10.Event) request.getAttribute("event")).getName() %></h1>
+    <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+    <fmt:setBundle basename="messages"/>
+    <h1><fmt:message key="viewAttendees.title"/>: <%= ((com.example.project_10.Event) request.getAttribute("event")).getName() %></h1>
     <table>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
+            <th><fmt:message key="viewAttendees.id"/></th>
+            <th><fmt:message key="viewAttendees.name"/></th>
+            <th><fmt:message key="viewAttendees.email"/></th>
         </tr>
         <%@ page import="java.util.List, com.example.project_10.Attendee" %>
         <% List<Attendee> attendees = (List<Attendee>) request.getAttribute("attendees"); %>
@@ -29,10 +31,10 @@
             <% } %>
         <% } else { %>
             <tr>
-                <td colspan="3">No attendees found for this event.</td>
+                <td colspan="3"><fmt:message key="viewAttendees.noAttendees"/></td>
             </tr>
         <% } %>
     </table>
-    <br><a href="index.jsp">Back to Home</a>
+    <br><a href="index.jsp?lang=${param.lang}"><fmt:message key="backHome"/></a>
 </body>
 </html>

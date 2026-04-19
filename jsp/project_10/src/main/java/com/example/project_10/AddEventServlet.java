@@ -58,7 +58,7 @@ public class AddEventServlet extends HttpServlet {
             tx.commit();
             em.close();
 
-            response.sendRedirect("viewEvents");
+            response.sendRedirect("viewEvents?lang=" + request.getParameter("lang"));
 
         } catch (ParseException | NumberFormatException e) {
             request.setAttribute("error", "Invalid input format");

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add New Event</title>
+    <title><fmt:message key="addEvent.title"/></title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         form { max-width: 400px; }
@@ -12,21 +12,24 @@
     </style>
 </head>
 <body>
-    <h1>Add New Event</h1>
+    <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+    <fmt:setBundle basename="messages"/>
+    <h1><fmt:message key="addEvent.title"/></h1>
     <form action="addEvent" method="post">
-        <label for="name">Name:</label>
+        <input type="hidden" name="lang" value="${param.lang}">
+        <label for="name"><fmt:message key="addEvent.name"/>:</label>
         <input type="text" id="name" name="name" required minlength="5">
 
-        <label for="date">Date:</label>
+        <label for="date"><fmt:message key="addEvent.date"/>:</label>
         <input type="date" id="date" name="date" required>
 
-        <label for="venue">Venue:</label>
+        <label for="venue"><fmt:message key="addEvent.venue"/>:</label>
         <input type="text" id="venue" name="venue" required>
 
-        <label for="seatsAvailable">Seats Available:</label>
+        <label for="seatsAvailable"><fmt:message key="addEvent.seats"/>:</label>
         <input type="number" id="seatsAvailable" name="seatsAvailable" required min="1">
 
-        <button type="submit">Add Event</button>
+        <button type="submit"><fmt:message key="addEvent.submit"/></button>
     </form>
     <% if (request.getAttribute("errors") != null) { %>
         <div class="error">
@@ -40,6 +43,6 @@
     <% if (request.getAttribute("error") != null) { %>
         <div class="error"><%= request.getAttribute("error") %></div>
     <% } %>
-    <br><a href="index.jsp">Back to Home</a>
+    <br><a href="index.jsp?lang=${param.lang}"><fmt:message key="backHome"/></a>
 </body>
 </html>

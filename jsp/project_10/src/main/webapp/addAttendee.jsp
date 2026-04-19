@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add New Attendee</title>
+    <title><fmt:message key="addAttendee.title"/></title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         form { max-width: 400px; }
@@ -12,15 +12,18 @@
     </style>
 </head>
 <body>
-    <h1>Add New Attendee</h1>
+    <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+    <fmt:setBundle basename="messages"/>
+    <h1><fmt:message key="addAttendee.title"/></h1>
     <form action="addAttendee" method="post">
-        <label for="name">Name:</label>
+        <input type="hidden" name="lang" value="${param.lang}">
+        <label for="name"><fmt:message key="addAttendee.name"/>:</label>
         <input type="text" id="name" name="name" required minlength="3">
 
-        <label for="email">Email:</label>
+        <label for="email"><fmt:message key="addAttendee.email"/>:</label>
         <input type="email" id="email" name="email" required>
 
-        <label for="eventId">Event:</label>
+        <label for="eventId"><fmt:message key="addAttendee.event"/>:</label>
         <select id="eventId" name="eventId" required>
             <%@ page import="java.util.List, com.example.project_10.Event" %>
             <% List<Event> events = (List<Event>) request.getAttribute("events"); %>
@@ -31,7 +34,7 @@
             <% } %>
         </select>
 
-        <button type="submit">Add Attendee</button>
+        <button type="submit"><fmt:message key="addAttendee.submit"/></button>
     </form>
     <% if (request.getAttribute("errors") != null) { %>
         <div class="error">
@@ -45,6 +48,6 @@
     <% if (request.getAttribute("error") != null) { %>
         <div class="error"><%= request.getAttribute("error") %></div>
     <% } %>
-    <br><a href="index.jsp">Back to Home</a>
+    <br><a href="index.jsp?lang=${param.lang}"><fmt:message key="backHome"/></a>
 </body>
 </html>
