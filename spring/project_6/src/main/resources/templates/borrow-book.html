@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Borrow a Book</title>
+</head>
+<body>
+<h1>Borrow a Book</h1>
+<form th:action="@{/borrow}" th:object="${borrowedBook}" method="post">
+    <label for="borrower">Borrower:</label>
+    <select id="borrower" name="borrower" th:field="*{borrower}" required>
+        <option th:each="borrower : ${borrowers}" th:value="${borrower.id}" th:text="${borrower.name}"></option>
+    </select>
+
+    <label for="book">Book:</label>
+    <select id="book" name="book" th:field="*{book}" required>
+        <option th:each="book : ${books}" th:value="${book.id}" th:text="${book.title}" th:if="${book.copiesAvailable > 0}"></option>
+    </select>
+
+    <label for="borrowDate">Borrow Date:</label>
+    <input type="date" id="borrowDate" name="borrowDate" th:field="*{borrowDate}"/>
+
+    <button type="submit">Borrow Book</button>
+</form>
+</body>
+</html>
