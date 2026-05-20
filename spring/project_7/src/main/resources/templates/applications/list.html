@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Job Applications</title>
+</head>
+<body>
+<h2>Job Applications for <span th:text="${job.title}"></span></h2>
+<a th:href="@{/jobs}">Back to Jobs</a>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Applicant Name</th>
+        <th>Email</th>
+        <th>Application Date</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="app : ${applications}">
+        <td th:text="${app.id}"></td>
+        <td th:text="${app.applicantName}"></td>
+        <td th:text="${app.email}"></td>
+        <td th:text="${app.applicationDate}"></td>
+        <td>
+            <a th:href="@{/applications/delete/{id}(id=${app.id})}" onclick="return confirm('Delete this application?');">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

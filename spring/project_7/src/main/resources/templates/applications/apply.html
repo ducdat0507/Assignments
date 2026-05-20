@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Apply for a Job</title>
+</head>
+<body>
+<h2>Apply for a Job</h2>
+
+<form th:action="@{/applications/apply}" th:object="${application}" method="post">
+    <div>
+        <label>Applicant Name:</label>
+        <input type="text" th:field="*{applicantName}" />
+        <div th:if="${#fields.hasErrors('applicantName')}" th:errors="*{applicantName}"></div>
+    </div>
+    <div>
+        <label>Email:</label>
+        <input type="email" th:field="*{email}" />
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+    </div>
+    <div>
+        <label>Resume:</label>
+        <textarea th:field="*{resume}" rows="6" cols="60"></textarea>
+        <div th:if="${#fields.hasErrors('resume')}" th:errors="*{resume}"></div>
+    </div>
+    <div>
+        <label>Select Job:</label>
+        <select name="jobId">
+            <option th:each="job : ${jobs}" th:value="${job.id}"
+                    th:selected="${job.id} == ${selectedJobId}" th:text="${job.title + ' (' + job.company + ')'}"></option>
+        </select>
+    </div>
+    <div>
+        <label>Application Date:</label>
+        <input type="date" th:field="*{applicationDate}" />
+        <div th:if="${#fields.hasErrors('applicationDate')}" th:errors="*{applicationDate}"></div>
+    </div>
+    <div>
+        <button type="submit">Submit Application</button>
+        <a th:href="@{/jobs}">Cancel</a>
+    </div>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add New Job Posting</title>
+</head>
+<body>
+<h2>Add New Job Posting</h2>
+
+<form th:action="@{/jobs/add}" th:object="${job}" method="post">
+    <div>
+        <label>Title:</label>
+        <input type="text" th:field="*{title}" />
+        <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+    </div>
+    <div>
+        <label>Company:</label>
+        <input type="text" th:field="*{company}" />
+        <div th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></div>
+    </div>
+    <div>
+        <label>Location:</label>
+        <input type="text" th:field="*{location}" />
+        <div th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
+    </div>
+    <div>
+        <label>Salary (USD):</label>
+        <input type="number" step="0.01" th:field="*{salary}" />
+        <div th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}"></div>
+    </div>
+    <div>
+        <label>Posted Date:</label>
+        <input type="date" th:field="*{postedDate}" />
+        <div th:if="${#fields.hasErrors('postedDate')}" th:errors="*{postedDate}"></div>
+    </div>
+    <div>
+        <button type="submit">Post Job</button>
+        <a th:href="@{/jobs}">Cancel</a>
+    </div>
+</form>
+
+</body>
+</html>
