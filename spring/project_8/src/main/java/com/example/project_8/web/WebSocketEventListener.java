@@ -12,9 +12,9 @@ public class WebSocketEventListener {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    private final UserRegistry userRegistry;
+    private final AppUserRegistry userRegistry;
 
-    public WebSocketEventListener(SimpMessagingTemplate messagingTemplate, UserRegistry userRegistry) {
+    public WebSocketEventListener(SimpMessagingTemplate messagingTemplate, AppUserRegistry userRegistry) {
         this.messagingTemplate = messagingTemplate;
         this.userRegistry = userRegistry;
     }

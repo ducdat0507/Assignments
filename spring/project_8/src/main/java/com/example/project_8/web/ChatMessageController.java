@@ -17,9 +17,9 @@ public class ChatMessageController {
 
     private final MessageService messageService;
 
-    private final UserRegistry userRegistry;
+    private final AppUserRegistry userRegistry;
 
-    public ChatMessageController(SimpMessagingTemplate messagingTemplate, MessageService messageService, UserRegistry userRegistry) {
+    public ChatMessageController(SimpMessagingTemplate messagingTemplate, MessageService messageService, AppUserRegistry userRegistry) {
         this.messagingTemplate = messagingTemplate;
         this.messageService = messageService;
         this.userRegistry = userRegistry;

@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class UserRegistry {
+public class AppUserRegistry {
 
     private final ConcurrentHashMap<String, String> sessionIdToUser = new ConcurrentHashMap<>();
 
