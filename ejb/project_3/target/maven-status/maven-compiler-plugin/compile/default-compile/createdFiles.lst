@@ -1,0 +1,5 @@
+com/example/service/ExamService.class
+com/example/mdb/ExamMDB.class
+com/example/web/AllExamsServlet.class
+com/example/model/Exam.class
+com/example/web/SubmitExamServlet.class

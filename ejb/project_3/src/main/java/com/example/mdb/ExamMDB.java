@@ -2,16 +2,16 @@ package com.example.mdb;
 
 import com.example.model.Exam;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.jms.*;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.jms.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Date;
 
 @MessageDriven(activationConfig = {
     @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "java:/jms/topic/exam_topic"),
-    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic")
+    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Topic")
 })
 public class ExamMDB implements MessageListener {
 
