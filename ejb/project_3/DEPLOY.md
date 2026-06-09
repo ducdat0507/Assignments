@@ -5,10 +5,10 @@ WildFly Deployment Instructions
 
 2) Configure the datasource on WildFly
 - Create a datasource named `ExampleDS` that points to the `examsdb` MySQL database.
-- Example CLI commands (adjust username/password/hostname/port as needed):
+    + Example CLI commands (adjust username/password/hostname/port as needed):
 
-  /subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.cj.jdbc.MysqlXADataSource)
-  data-source add --name=ExampleDS --driver-name=mysql --jndi-name=java:/jboss/datasources/ExampleDS --connection-url=jdbc:mysql://localhost:3306/examsdb?useSSL=false\u0026serverTimezone=UTC --user-name=root --password=password
+      /subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.cj.jdbc.MysqlXADataSource)
+      data-source add --name=ExampleDS --driver-name=mysql --jndi-name=java:/jboss/datasources/ExampleDS --connection-url=jdbc:mysql://localhost:3306/examsdb?useSSL=false\u0026serverTimezone=UTC --user-name=root --password=password
 
 - Or use the WildFly admin console (`http://<host>:9990`) -> Configuration -> Subsystems -> Datasources -> Add.
 
