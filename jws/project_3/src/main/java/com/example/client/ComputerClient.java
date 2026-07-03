@@ -1,20 +1,14 @@
 package com.example.client;
 
 import com.example.model.Computer;
+import com.example.service.ComputerService;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,16 +20,19 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 
+/**
+ * JAX-WS Client for Computer Service
+ * Communicates with the Computer Web Service via JAX-WS
+ */
 public class ComputerClient extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private static final String SERVICE_URL = "http://localhost:8080/project_3/ComputerService";
+    private static final String SERVICE_URL = "http://localhost:8080/project_3/ComputerService?wsdl";
+    private static final String SERVICE_NAMESPACE = "http://com.example.service/";
+    private static final String SERVICE_NAME = "ComputerService";
 
     private JTextField txtComID;
     private JTextField txtComName;
@@ -43,11 +40,35 @@ public class ComputerClient extends JFrame {
     private JTextField txtManufacturer;
     private JTable table;
     private DefaultTableModel tableModel;
+    private ComputerService proxy;
 
     public ComputerClient() {
-        super("Computer WebService Client");
-        initUI();
-        loadAllComputers();
+        super("Computer Service - JAX-WS Client");
+        try {
+            initializeWebService();
+            initUI();
+            loadAllComputers();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Failed to initialize web service: " + e.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Initialize the JAX-WS web service proxy
+     */
+    private void initializeWebService() throws MalformedURLException {
+        try {
+            URL wsdlLocation = new URL(SERVICE_URL);
+            QName serviceName = new QName(SERVICE_NAMESPACE, SERVICE_NAME);
+            Service service = Service.create(wsdlLocation, serviceName);
+            proxy = service.getPort(ComputerService.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to connect to web service at " + SERVICE_URL, e);
+        }
     }
 
     private void initUI() {
@@ -94,7 +115,7 @@ public class ComputerClient extends JFrame {
         buttonPanel.add(btnFind);
         buttonPanel.add(btnShowAll);
 
-        tableModel = new DefaultTableModel(new Object[] {"comID", "comName", "price", "manufacturer"}, 0);
+        tableModel = new DefaultTableModel(new Object[]{"comID", "comName", "price", "manufacturer"}, 0);
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(600, 250));
@@ -123,147 +144,101 @@ public class ComputerClient extends JFrame {
     private void addComputer() {
         try {
             validateFields();
-            String requestBody = "action=add"
-                    + "&comID=" + URLEncoder.encode(txtComID.getText().trim(), "UTF-8")
-                    + "&comName=" + URLEncoder.encode(txtComName.getText().trim(), "UTF-8")
-                    + "&price=" + URLEncoder.encode(txtPrice.getText().trim(), "UTF-8")
-                    + "&manufacturer=" + URLEncoder.encode(txtManufacturer.getText().trim(), "UTF-8");
-            Document doc = postXml(SERVICE_URL, requestBody);
-            String success = getTagValue(doc, "success");
-            String message = getTagValue(doc, "message");
-            if ("true".equalsIgnoreCase(success)) {
-                JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+            Computer computer = new Computer(
+                    txtComID.getText().trim(),
+                    txtComName.getText().trim(),
+                    Double.parseDouble(txtPrice.getText().trim()),
+                    txtManufacturer.getText().trim()
+            );
+            boolean success = proxy.addComputer(computer);
+            if (success) {
+                JOptionPane.showMessageDialog(this, 
+                    "Computer added successfully!", 
+                    "Success", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                clearForm();
                 loadAllComputers();
             } else {
-                JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                    "Failed to add computer.", 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
             }
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Validation", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                ex.getMessage(), 
+                "Validation Error", 
+                JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error adding computer: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                "Error adding computer: " + ex.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void findComputer() {
-        String comID = JOptionPane.showInputDialog(this, "Enter comID to find:", "Find Computer", JOptionPane.PLAIN_MESSAGE);
+        String comID = JOptionPane.showInputDialog(this, 
+            "Enter comID to find:", 
+            "Find Computer", 
+            JOptionPane.PLAIN_MESSAGE);
+        
         if (comID == null || comID.trim().isEmpty()) {
             return;
         }
+        
         try {
-            URL url = new URL(SERVICE_URL + "?action=find&comID=" + URLEncoder.encode(comID.trim(), "UTF-8"));
-            Document doc = loadXml(url);
-            String success = getTagValue(doc, "success");
-            if (success != null) {
-                String message = getTagValue(doc, "message");
-                JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+            Computer computer = proxy.findComputerById(comID.trim());
+            if (computer == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Computer not found.", 
+                    "Not Found", 
+                    JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            List<Computer> computers = parseComputers(doc);
-            if (computers.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Computer not found.", "Not found", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            Computer computer = computers.get(0);
             txtComID.setText(computer.getComID());
             txtComName.setText(computer.getComName());
             txtPrice.setText(String.valueOf(computer.getPrice()));
             txtManufacturer.setText(computer.getManufacturer());
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error finding computer: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                "Error finding computer: " + ex.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void loadAllComputers() {
         try {
-            URL url = new URL(SERVICE_URL + "?action=getAll");
-            Document doc = loadXml(url);
-            List<Computer> computers = parseComputers(doc);
+            List<Computer> computers = proxy.getAllComputers();
             reloadTable(computers);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error loading computers: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                "Error loading computers: " + ex.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void reloadTable(List<Computer> computers) {
         tableModel.setRowCount(0);
-        for (Computer computer : computers) {
-            tableModel.addRow(new Object[] {
-                    computer.getComID(),
-                    computer.getComName(),
-                    computer.getPrice(),
-                    computer.getManufacturer()
-            });
-        }
-    }
-
-    private Document loadXml(URL url) throws Exception {
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Accept", "application/xml");
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
-        connection.connect();
-        return parseDocument(connection.getInputStream());
-    }
-
-    private Document postXml(String urlString, String body) throws Exception {
-        URL url = new URL(urlString);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        connection.setRequestProperty("Accept", "application/xml");
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
-        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-        writer.write(body);
-        writer.flush();
-        writer.close();
-        return parseDocument(connection.getInputStream());
-    }
-
-    private Document parseDocument(InputStream inputStream) throws Exception {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(false);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(inputStream);
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
+        if (computers != null) {
+            for (Computer computer : computers) {
+                tableModel.addRow(new Object[]{
+                        computer.getComID(),
+                        computer.getComName(),
+                        computer.getPrice(),
+                        computer.getManufacturer()
+                });
             }
         }
     }
 
-    private List<Computer> parseComputers(Document document) {
-        List<Computer> computers = new ArrayList<Computer>();
-        NodeList nodes = document.getElementsByTagName("computer");
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Element element = (Element) nodes.item(i);
-            Computer computer = new Computer();
-            computer.setComID(getTagValue(element, "comID"));
-            computer.setComName(getTagValue(element, "comName"));
-            computer.setPrice(Double.parseDouble(getTagValue(element, "price")));
-            computer.setManufacturer(getTagValue(element, "manufacturer"));
-            computers.add(computer);
-        }
-        return computers;
-    }
-
-    private String getTagValue(Document document, String tagName) {
-        NodeList nodes = document.getElementsByTagName(tagName);
-        if (nodes.getLength() == 0) {
-            return null;
-        }
-        return nodes.item(0).getTextContent();
-    }
-
-    private String getTagValue(Element element, String tagName) {
-        NodeList nodes = element.getElementsByTagName(tagName);
-        if (nodes.getLength() == 0) {
-            return "";
-        }
-        return nodes.item(0).getTextContent();
+    private void clearForm() {
+        txtComID.setText("");
+        txtComName.setText("");
+        txtPrice.setText("");
+        txtManufacturer.setText("");
     }
 
     public static void main(String[] args) {
@@ -276,3 +251,5 @@ public class ComputerClient extends JFrame {
         });
     }
 }
+
+

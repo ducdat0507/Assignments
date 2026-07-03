@@ -1,9 +1,24 @@
 package com.example.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "computer")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Computer {
+    
+    @XmlElement
     private String comID;
+    
+    @XmlElement
     private String comName;
+    
+    @XmlElement
     private double price;
+    
+    @XmlElement
     private String manufacturer;
 
     public Computer() {
@@ -48,16 +63,27 @@ public class Computer {
         this.manufacturer = manufacturer;
     }
 
+    /**
+     * Converts Computer object to XML string format.
+     * @return XML string representation of the computer
+     */
     public String toXmlString() {
-        return "<computer>"
-                + "<comID>" + escapeXml(comID) + "</comID>"
-                + "<comName>" + escapeXml(comName) + "</comName>"
-                + "<price>" + price + "</price>"
-                + "<manufacturer>" + escapeXml(manufacturer) + "</manufacturer>"
-                + "</computer>";
+        StringBuilder sb = new StringBuilder();
+        sb.append("<computer>");
+        sb.append("<comID>").append(escapeXml(comID)).append("</comID>");
+        sb.append("<comName>").append(escapeXml(comName)).append("</comName>");
+        sb.append("<price>").append(price).append("</price>");
+        sb.append("<manufacturer>").append(escapeXml(manufacturer)).append("</manufacturer>");
+        sb.append("</computer>");
+        return sb.toString();
     }
 
-    private String escapeXml(String input) {
+    /**
+     * Escapes XML special characters.
+     * @param input the string to escape
+     * @return the escaped string
+     */
+    private static String escapeXml(String input) {
         if (input == null) {
             return "";
         }
@@ -66,5 +92,15 @@ public class Computer {
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
                 .replace("'", "&apos;");
+    }
+
+    @Override
+    public String toString() {
+        return "Computer{" +
+                "comID='" + comID + '\'' +
+                ", comName='" + comName + '\'' +
+                ", price=" + price +
+                ", manufacturer='" + manufacturer + '\'' +
+                '}';
     }
 }
